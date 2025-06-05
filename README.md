@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamento MotoChefe Maringá</title>
+    <!-- Carrega o Tailwind CSS para estilização -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importa a fonte Bebas Neue do Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        /* Define a fonte Inter para o corpo e Bebas Neue para o título */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Fundo preto puro */
+        }
+        /* Aplica a fonte Bebas Neue ao título */
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-0"> <!-- Removido padding direto do body -->
+    <!-- Contêiner principal com fundo escuro e borda branca suave -->
+    <!-- Ajustado padding responsivo e centralização para melhor adaptação em mobile -->
+    <div class="bg-gray-900 p-4 sm:p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-sm sm:max-w-md mx-auto border-2 border-white transform transition duration-500 hover:scale-105">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-white mb-6 drop-shadow-lg">Orçamento MotoChefe Maringá</h1>
+
+        <!-- Logo da MotoChefe -->
+        <div class="flex justify-center mb-6 sm:mb-8">
+            <!-- POR FAVOR, SUBSTITUA A URL ABAIXO PELA URL DA SUA LOGO REAL HOSPEDADA ONLINE. -->
+            <!-- Ajustado o tamanho da logo para ser mais responsivo -->
+            <img src="https://media-gru2-2.cdn.whatsapp.net/v/t61.24694-24/463794831_513770201628174_6843227204253915045_n.jpg?ccb=11-4&oh=01_Q5Aa1gFopuDupbFSw9nv5GIIMxflRcegGp7hAinyzzGzlNUwhQ&oe=684EAF86&_nc_sid=5e03e0&_nc_cat=106" alt="Logo MotoChefe" class="rounded-full w-24 h-24 sm:w-32 sm:h-32 object-cover border-4 border-white shadow-lg transform transition duration-300 hover:rotate-3 hover:scale-110">
+        </div>
+
+        <!-- Campo Nome do Cliente -->
+        <div class="mb-4">
+            <label for="clientName" class="block text-gray-200 text-sm font-semibold mb-2">Nome do cliente:</label>
+            <input type="text" id="clientName" placeholder="Digite o nome do cliente"
+                   class="bg-gray-800 text-gray-100 shadow-inner appearance-none border border-gray-700 rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition duration-200 ease-in-out placeholder-gray-400">
+        </div>
+
+        <!-- Campo Produto -->
+        <div class="mb-4">
+            <label for="productService" class="block text-gray-200 text-sm font-semibold mb-2">Produto:</label>
+            <input type="text" id="productService" placeholder="Ex: pneu, capacete, troca de óleo"
+                   class="bg-gray-800 text-gray-100 shadow-inner appearance-none border border-gray-700 rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition duration-200 ease-in-out placeholder-gray-400">
+        </div>
+
+        <!-- Campo Valor Total do Orçamento -->
+        <div class="mb-4">
+            <label for="totalValue" class="block text-gray-200 text-sm font-semibold mb-2">Valor total do orçamento (R$):</label>
+            <input type="number" id="totalValue" placeholder="0.00" value="0" min="0" step="0.01"
+                   class="bg-gray-800 text-gray-100 shadow-inner appearance-none border border-gray-700 rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition duration-200 ease-in-out placeholder-gray-400"
+                   oninput="calculateInstallments()">
+        </div>
+
+        <!-- Campo Número de Parcelas -->
+        <div class="mb-4">
+            <label for="numInstallments" class="block text-gray-200 text-sm font-semibold mb-2">Número de parcelas (Máx. 21):</label>
+            <input type="number" id="numInstallments" placeholder="1" value="1" min="1" max="21"
+                   class="bg-gray-800 text-gray-100 shadow-inner appearance-none border border-gray-700 rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition duration-200 ease-in-out placeholder-gray-400"
+                   oninput="calculateInstallments()">
+        </div>
+
+        <!-- Campo Valor da Entrada -->
+        <div class="mb-6">
+            <label for="downPayment" class="block text-gray-200 text-sm font-semibold mb-2">Valor da entrada (R$):</label>
+            <input type="number" id="downPayment" placeholder="0.00" value="0" min="0" step="0.01"
+                   class="bg-gray-800 text-gray-100 shadow-inner appearance-none border border-gray-700 rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition duration-200 ease-in-out placeholder-gray-400"
+                   oninput="calculateInstallments()">
+        </div>
+
+        <!-- Resultados Calculados -->
+        <div class="bg-white bg-opacity-10 p-4 rounded-xl border border-gray-500 shadow-inner">
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-gray-100 font-semibold text-base sm:text-lg">Valor parcelado:</span>
+                <span id="financedValue" class="text-white font-bold text-xl sm:text-2xl">R$ 0,00</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <!-- O texto desta span será atualizado dinamicamente pelo JavaScript -->
+                <span id="installmentLabel" class="text-gray-100 font-semibold text-base sm:text-lg">Valor da parcela:</span>
+                <span id="installmentValue" class="text-white font-bold text-xl sm:text-2xl">R$ 0,00</span>
+            </div>
+        </div>
+
+        <script>
+            // Função para formatar um número como moeda BRL
+            function formatCurrency(value) {
+                return new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                }).format(value);
+            }
+
+            // Função principal para calcular os valores
+            function calculateInstallments() {
+                // Obtém os elementos de input
+                const totalValueInput = document.getElementById('totalValue');
+                const numInstallmentsInput = document.getElementById('numInstallments');
+                const downPaymentInput = document.getElementById('downPayment');
+
+                // Obtém os elementos de saída
+                const financedValueSpan = document.getElementById('financedValue');
+                const installmentValueSpan = document.getElementById('installmentValue');
+                const installmentLabelSpan = document.getElementById('installmentLabel'); // Novo elemento para o rótulo
+
+                // Converte os valores de string para número (usando parseFloat para permitir decimais)
+                let totalValue = parseFloat(totalValueInput.value) || 0;
+                let numInstallments = parseInt(numInstallmentsInput.value) || 1;
+                let downPayment = parseFloat(downPaymentInput.value) || 0;
+
+                // Garante que os valores não sejam negativos
+                if (totalValue < 0) totalValue = 0;
+                if (numInstallments < 1) numInstallments = 1; // Mínimo de 1 parcela
+                if (downPayment < 0) downPayment = 0;
+
+                // Garante que a entrada não seja maior que o valor total do orçamento
+                if (downPayment > totalValue) {
+                    downPayment = totalValue;
+                    downPaymentInput.value = totalValue.toFixed(2); // Atualiza o campo de entrada
+                }
+
+                // 1. Calcular o Valor Parcelado (após a entrada)
+                const financedValue = totalValue - downPayment;
+                financedValueSpan.textContent = formatCurrency(financedValue);
+
+                // 2. Determinar a taxa de juros com base no número de parcelas
+                let interestRate = 0; // Taxa de juros total em porcentagem
+                let labelText = "Valor da parcela com juros:"; // Texto padrão para o rótulo
+
+                if (numInstallments <= 12) {
+                    interestRate = 0;
+                    labelText = "Valor da parcela sem juros:";
+                } else if (numInstallments <= 18) {
+                    interestRate = 3.8;
+                } else if (numInstallments <= 21) {
+                    interestRate = 7;
+                } else {
+                    // Se o número de parcelas for maior que 21, pode-se definir um comportamento padrão
+                    // Para este caso, vamos limitar o input HTML para 21, mas se for inserido via console,
+                    // ele usará a taxa de 7%.
+                    interestRate = 7;
+                }
+
+                // Atualiza o texto do rótulo da parcela
+                installmentLabelSpan.textContent = labelText;
+
+                // 3. Calcular o Valor da Parcela com Juros
+                let installmentValue = 0;
+
+                if (interestRate > 0) {
+                    // Aplica os juros simples ao valor financiado
+                    const totalInterestAmount = financedValue * (interestRate / 100);
+                    installmentValue = (financedValue + totalInterestAmount) / numInstallments;
+                } else {
+                    // Se a taxa de juros for 0, divide o valor financiado pelo número de parcelas
+                    installmentValue = financedValue / numInstallments;
+                }
+
+                // Se o número de parcelas for 0 (ou inválido), a parcela é o valor financiado
+                if (numInstallments === 0 || isNaN(installmentValue) || !isFinite(installmentValue)) {
+                    installmentValue = financedValue; // Ou 0, dependendo da lógica desejada para "0 parcelas"
+                }
+
+                installmentValueSpan.textContent = formatCurrency(installmentValue);
+            }
+
+            // Chama a função de cálculo uma vez ao carregar a página para exibir os valores iniciais
+            document.addEventListener('DOMContentLoaded', calculateInstallments);
+        </script>
+    </div>
+</body>
+</html>
